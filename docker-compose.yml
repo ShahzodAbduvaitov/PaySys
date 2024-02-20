@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  database:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+  tg_bot:
+    image: sqlite3:latest
+    volumes:
+      - sqlite_data:/var/lib/sqlite3/data/
+
+  api:
+    build: .
+    volumes:
+      - . :/paysistem46
+    ports:
+      - "2525:2525"
+    command:
+      - uvicorn
+      - main:app
+      - --host=0.0.0.0
+      - --port=2525
+    depends_on:
+      - database
+      - tg_bot
+volumes:
+  postgres_data:
